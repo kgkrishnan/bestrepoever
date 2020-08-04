@@ -4,7 +4,8 @@ private class JnkCntctNoDRMSignDtNoChildIsJunkMarkTest {
     static void setupData(String contactFirstName) {
 
         List<Contact> testContacts = new List<Contact>();
-        // Create  Contacts to Cleanse
+
+        // Create  Contacts to be Cleansed
         for(Integer i=0;i<1;i++) 
         {
             //Is_Employee__c is a Formula(Chckbox). 
