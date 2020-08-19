@@ -8,6 +8,7 @@
 	<property name="sfdxPath"	value="C:\Program Files\Salesforce CLI\bin\sfdx.cmd" />
 	<property name="force-appfolderpath"	value="C:\Krish\DRM\CI-CD\CICDWorkspace\SampleCICD\SampleCICD\force-app\main\default" />
 	<property name="targetfolder"	value="C:\Krish\DRM\CI-CD\CICDWorkspace\SampleCICD\deploy-sfSample" />
+	<property name="canDeploy" value="false"/>
 
 	<taskdef resource="net/sf/antcontrib/antlib.xml">
 			<classpath>
