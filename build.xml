@@ -82,6 +82,15 @@
       </exec>
 	</target>
 	
+	<target name="MetadataconvertWORKSPACE">  
+		<echo>Metadataconvert Begins.......</echo>
+		<delete dir="${WORKSPACE}/deploy-sfSample"/>
+		<mkdir dir="${WORKSPACE}/deploy-sfSample"/>
+      <exec executable="${sfdxPath}">         
+         <arg line="force:source:convert -r ${WORKSPACE}/SampleCICD/force-app/main/default -d {WORKSPACE}/deploy-sfSample "/>
+      </exec>
+	</target>
+	
 	<target name="connectToDEOrg">  
 		<echo>connectToDEOrg Target Begins...</echo>
       <exec executable="${sfdxPath}">         
