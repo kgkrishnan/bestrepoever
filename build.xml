@@ -98,6 +98,6 @@
 
 	<target name="PrepareBuildAndDeploy" depends="Metadataconvert,connectToDEOrg,deploy">
 		
-    </target
+    </target>
 	
 </project>
