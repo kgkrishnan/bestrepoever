@@ -87,7 +87,7 @@
 		<delete dir="${env.WORKSPACE}/deploy-sfSample"/>
 		<mkdir dir="${env.WORKSPACE}/deploy-sfSample"/>
       <exec executable="${sfdxPath}">         
-         <arg line="force:source:convert -r ${env.WORKSPACE}/SampleCICD/force-app/main/default -d {env.WORKSPACE}/deploy-sfSample "/>
+         <arg line="force:source:convert -r ${env.WORKSPACE}/SampleCICD/force-app/main/default -d ${env.WORKSPACE}/deploy-sfSample "/>
       </exec>
 	</target>
 	
