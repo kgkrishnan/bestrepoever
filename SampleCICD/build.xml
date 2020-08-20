@@ -1,62 +1,112 @@
-<taskdef resource="net/sf/antcontrib/antlib.xml">
-		<classpath>
-			<pathelement location="lib/ant-contrib-1.0b3.jar"/>
-		</classpath>
-</taskdef>
-<macrodef name="gitDiff">
-		<sequential>
-			<exec executable="git" outputproperty="git.diff">
-				<arg value="diff" />
-				<arg value="--pretty=format:" />
-				<arg value="--name-only" />
-				<arg value="${env.GIT_COMMIT}" />
-				<arg value="${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT}" />
-			</exec>
-			<echo>${git.diff}</echo>
-		</sequential>
-</macrodef>
+<project name="test" default="sync" xmlns:sf="antlib:com.salesforce">
 
-<target name="diffBuilderWithGitCommit">
-		<delete dir="deploy-sf"/>
-		<mkdir dir="deploy-sf"/>
-		<echo>Current GIT Commit : ${env.GIT_COMMIT}</echo>
-		<echo>Previous Known Successful GIT Commit : ${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT}</echo>
-		<gitDiff/>
-		<for list="${git.diff}" param="currentDiff" delimiter="${line.separator}">
+	<property environment="env"/>
+	<property name="sf.username"      value="kgkrishnan@myde.learn"/>
+	<property name="sf.clientId"      value="3MVG9YDQS5WtC11rrFQR4UBaq6zN69XIhN05KRyh3p9EaENMAom_BZPcBhBWhzPgjrbDvQyYOjr1gRNem8nXN"/>
+	<property name="sf.jwtkeyfile"      value="C:/openssl/bin/server.key"/>
+	
+	<property name="sfdxPath"	value="C:\Program Files\Salesforce CLI\bin\sfdx.cmd" />
+	<property name="force-appfolderpath"	value="C:\Krish\DRM\CI-CD\CICDWorkspace\SampleCICD\SampleCICD\force-app\main\default" />
+	<property name="targetfolder"	value="C:\Krish\DRM\CI-CD\CICDWorkspace\SampleCICD\deploy-sfSample" />
+	<property name="canDeploy" value="false"/>
+
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+			<classpath>
+				<pathelement location="lib/ant-contrib-1.0b3.jar"/>
+			</classpath>
+	</taskdef>
+	<macrodef name="gitDiff">
 			<sequential>
-				<if>
-					<and>
-						<available file="@{currentDiff}"/>
-						<matches string="@{currentDiff}" pattern="force-app/"/>
-					</and>
-					<then>
-						<propertyregex
-							property="currentDiffWithoutSRC"
-							input="@{currentDiff}"
-							regexp="force-app\/([a-zA-Z$]*\/[a-zA-Z0-9\/\.\_-]*)"
-							select="\1"
-							casesensitive="true" 
-							override="true"
-							defaultValue=""/>
-						<echo>Current Component : ${currentDiffWithoutSRC}</echo>
-						<copy todir="deploy-sf" verbose="false">
-							<fileset dir="force-app">
-								<include name="${currentDiffWithoutSRC}" />
-							</fileset>
-						</copy>
-						<if>
-							<available file="@{currentDiff}-meta.xml"/>
-							<then>
-								<echo>Generating meta-xml : @{currentDiff}</echo>
-								<copy todir="deploy-sf" verbose="false">
-									<fileset dir="force-app">
-										<include name="${currentDiffWithoutSRC}-meta.xml" />
-									</fileset>
-								</copy>
-							</then>
-						</if>
-					</then>
-				</if>
+				<exec executable="git" outputproperty="git.diff">
+					<arg value="diff" />
+					<arg value="--pretty=format:" />
+					<arg value="--name-only" />
+					<arg value="${env.GIT_COMMIT}" />
+					<arg value="${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT}" />
+				</exec>
+				<echo>${git.diff}</echo>
 			</sequential>
-		</for>
-</target>
+	</macrodef>
+
+	<target name="diffBuilderWithGitCommit">
+			<delete dir="deploy-sf"/>
+			<mkdir dir="deploy-sf"/>
+			<echo>Current GIT Commit : ${env.GIT_COMMIT}</echo>
+			<echo>Previous Known Successful GIT Commit : ${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT}</echo>
+			<gitDiff/>
+			<for list="${git.diff}" param="currentDiff" delimiter="${line.separator}">
+				<sequential>
+					<if>
+						<and>
+							<available file="@{currentDiff}"/>
+							<matches string="@{currentDiff}" pattern="force-app/"/>
+						</and>
+						<then>
+							<propertyregex
+								property="currentDiffWithoutSRC"
+								input="@{currentDiff}"
+								regexp="force-app\/([a-zA-Z$]*\/[a-zA-Z0-9\/\.\_-]*)"
+								select="\1"
+								casesensitive="true" 
+								override="true"
+								defaultValue=""/>
+							<echo>Current Component : ${currentDiffWithoutSRC}</echo>
+							<copy todir="deploy-sf" verbose="false">
+								<fileset dir="force-app">
+									<include name="${currentDiffWithoutSRC}" />
+								</fileset>
+							</copy>
+							<if>
+								<available file="@{currentDiff}-meta.xml"/>
+								<then>
+									<echo>Generating meta-xml : @{currentDiff}</echo>
+									<copy todir="deploy-sf" verbose="false">
+										<fileset dir="force-app">
+											<include name="${currentDiffWithoutSRC}-meta.xml" />
+										</fileset>
+									</copy>
+								</then>
+							</if>
+						</then>
+					</if>
+				</sequential>
+			</for>
+	</target>
+	
+	<target name="Metadataconvert">  
+		<echo>Metadataconvert Begins...</echo>
+		<delete dir="${targetfolder}"/>
+		<mkdir dir="${targetfolder}"/>
+      <exec executable="${sfdxPath}">         
+         <arg line="force:source:convert -r ${force-appfolderpath} -d ${targetfolder} "/>
+      </exec>
+	</target>
+	
+	<target name="MetadataconvertWORKSPACE">  
+		<echo>Metadataconvert Begins...</echo>
+		<delete dir="${WORKSPACE}/deploy-sfSample"/>
+		<mkdir dir="${WORKSPACE}/deploy-sfSample"/>
+      <exec executable="${sfdxPath}">         
+         <arg line="force:source:convert -r ${WORKSPACE}/SampleCICD/force-app/main/default -d {WORKSPACE}/deploy-sfSample "/>
+      </exec>
+	</target>
+	
+	<target name="connectToDEOrg">  
+		<echo>connectToDEOrg Target Begins...</echo>
+      <exec executable="${sfdxPath}">         
+         <arg line="force:auth:jwt:grant --clientid ${sf.clientId} --jwtkeyfile ${sf.jwtkeyfile} --username ${sf.username} "/>
+      </exec>
+	</target>
+
+	<target name="deploy">  
+		<echo>Deployment Begins...</echo>
+		<exec executable="${sfdxPath}">         
+			<arg line="force:mdapi:deploy -d ${targetfolder} "/>
+		</exec>
+	</target>
+
+	<target name="PrepareBuildAndDeploy" depends="Metadataconvert,connectToDEOrg,deploy">
+		
+    </target>
+	
+</project>
