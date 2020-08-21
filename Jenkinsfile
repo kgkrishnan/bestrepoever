@@ -9,7 +9,7 @@ node {
 	//def HUB_ORG
     //def SFDC_HOST 
 	
-    def JWT_KEY_CRED_ID = env.Krish_server.key
+    def JWT_KEY_CRED_ID = env.Krish_server_key
 	
     //def CONNECTED_APP_CONSUMER_KEY
 
