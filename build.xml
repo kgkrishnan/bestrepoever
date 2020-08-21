@@ -1,15 +1,7 @@
 <project name="test" default="sync" xmlns:sf="antlib:com.salesforce">
 
 	<property environment="env"/>
-	<property name="sf.username"      value="kgkrishnan@myde.learn"/>
-	<property name="sf.clientId"      value="3MVG9YDQS5WtC11rrFQR4UBaq6zN69XIhN05KRyh3p9EaENMAom_BZPcBhBWhzPgjrbDvQyYOjr1gRNem8nXN"/>
-	<property name="sf.jwtkeyfile"      value="C:/openssl/bin/server.key"/>
 	
-	<property name="sfdxPath"	value="C:\Program Files\Salesforce CLI\bin\sfdx.cmd" />
-	<property name="force-appfolderpath"	value="C:\Krish\DRM\CI-CD\CICDWorkspace\SampleCICD\SampleCICD\force-app\main\default" />
-	<property name="targetfolder"	value="C:\Krish\DRM\CI-CD\CICDWorkspace\SampleCICD\deploy-sfSample" />
-	<property name="canDeploy" value="false"/>
-
 	<taskdef resource="net/sf/antcontrib/antlib.xml">
 			<classpath>
 				<pathelement location="lib/ant-contrib-1.0b3.jar"/>
@@ -72,41 +64,4 @@
 				</sequential>
 			</for>
 	</target>
-	
-	<target name="Metadataconvert">  
-		<echo>Metadataconvert Begins...</echo>
-		<delete dir="${targetfolder}"/>
-		<mkdir dir="${targetfolder}"/>
-      <exec executable="${sfdxPath}">         
-         <arg line="force:source:convert -r ${force-appfolderpath} -d ${targetfolder} "/>
-      </exec>
-	</target>
-	
-	<target name="MetadataconvertWORKSPACE">  
-		<echo>Metadataconvert Begins.......</echo>
-		<delete dir="${env.WORKSPACE}/deploy-sfSample"/>
-		<mkdir dir="${env.WORKSPACE}/deploy-sfSample"/>
-      <exec executable="${sfdxPath}">         
-         <arg line="force:source:convert -r ${env.WORKSPACE}/SampleCICD/force-app/main/default -d ${env.WORKSPACE}/deploy-sfSample "/>
-      </exec>
-	</target>
-	
-	<target name="connectToDEOrg">  
-		<echo>connectToDEOrg Target Begins...</echo>
-      <exec executable="${sfdxPath}">         
-         <arg line="force:auth:jwt:grant --clientid ${sf.clientId} --jwtkeyfile ${sf.jwtkeyfile} --username ${sf.username} "/>
-      </exec>
-	</target>
-
-	<target name="deploy">  
-		<echo>Deployment Begins...</echo>
-		<exec executable="${sfdxPath}">         
-			<arg line="force:mdapi:deploy -d ${targetfolder} "/>
-		</exec>
-	</target>
-
-	<target name="PrepareBuildAndDeploy" depends="Metadataconvert,connectToDEOrg,deploy">
-		
-    </target>
-	
 </project>
