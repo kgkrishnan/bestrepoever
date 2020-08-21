@@ -9,7 +9,7 @@ node {
 	//def HUB_ORG
     //def SFDC_HOST 
 	
-    def JWT_KEY_CRED_ID = env.JWT_CRED_ID_DH
+    def JWT_KEY_CRED_ID = env.Krish_server.key
 	
     //def CONNECTED_APP_CONSUMER_KEY
 
@@ -24,7 +24,8 @@ node {
     //println SFDC_HOST
     //println CONNECTED_APP_CONSUMER_KEY
 	
-    def toolbelt = tool 'toolbelt'
+    //def toolbelt = tool 'toolbelt'
+	def toolbelt = tool 'sfdx'
 
     stage('checkout source') {
         // when running in multi-branch job, one must issue this command
@@ -35,7 +36,7 @@ node {
     //withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')])
 	
 		withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file'),
-						string(credentialsId: 'CONNECTED_APP_CONSUMER_KEY',variable: 'CONNECTED_APP_CONSUMER_KEY'),
+						string(credentialsId: 'Krish_Connect_App_Consumer_Key',variable: 'CONNECTED_APP_CONSUMER_KEY'),
 						string(credentialsId: 'HUB_ORG',variable: 'HUB_ORG'),
 						string(credentialsId: 'SFDC_HOST',variable: 'SFDC_HOST')])	{
 		
