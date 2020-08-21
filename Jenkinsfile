@@ -31,6 +31,7 @@ node {
     stage('checkout source') {
         // when running in multi-branch job, one must issue this command
         checkout scm
+	cd /force-app
     }
 
 	
@@ -61,11 +62,11 @@ node {
 			
 			// need to pull out assigned username
 			if (isUnix()) {
-				cd /force-app
+				
 				//rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d manifest/. -u ${HUB_ORG}"
 				rmsg = sh returnStdout: true, script: "${toolbelt} force:source:deploy  -u ${HUB_ORG}"
 			}else{
-				cd /force-app
+				
 			   	//rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy -d manifest/. -u ${HUB_ORG}"
 			   	rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:deploy  -u ${HUB_ORG}"
 			}
