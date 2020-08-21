@@ -31,7 +31,7 @@ node {
     stage('checkout source') {
         // when running in multi-branch job, one must issue this command
         checkout scm
-	cd /force-app
+	
     }
 
 	
@@ -64,11 +64,11 @@ node {
 			if (isUnix()) {
 				
 				//rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d manifest/. -u ${HUB_ORG}"
-				rmsg = sh returnStdout: true, script: "${toolbelt} force:source:deploy  -u ${HUB_ORG}"
+				rmsg = sh returnStdout: true, script: "${toolbelt} force:source:deploy -x manifest/package.xml  -u ${HUB_ORG} --wait 20"
 			}else{
 				
 			   	//rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy -d manifest/. -u ${HUB_ORG}"
-			   	rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:deploy  -u ${HUB_ORG}"
+			   	rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:deploy -x manifest/package.xml  -u ${HUB_ORG} --wait 20"
 			}
 			  
             printf rmsg
