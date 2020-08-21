@@ -23,6 +23,7 @@ node {
     //println HUB_ORG
     //println SFDC_HOST
     //println CONNECTED_APP_CONSUMER_KEY
+	println JWT_KEY_CRED_ID
 	
     //def toolbelt = tool 'toolbelt'
 	def toolbelt = tool 'sfdx'
