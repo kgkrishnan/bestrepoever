@@ -61,11 +61,13 @@ node {
 			
 			// need to pull out assigned username
 			if (isUnix()) {
+				cd /force-app
 				//rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d manifest/. -u ${HUB_ORG}"
-				rmsg = sh returnStdout: true, script: "${toolbelt} force:source:deploy -p /force-app -u ${HUB_ORG}"
+				rmsg = sh returnStdout: true, script: "${toolbelt} force:source:deploy  -u ${HUB_ORG}"
 			}else{
-			   //rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy -d manifest/. -u ${HUB_ORG}"
-			   rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:deploy -p /force-app -u ${HUB_ORG}"
+				cd /force-app
+			   	//rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy -d manifest/. -u ${HUB_ORG}"
+			   	rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:deploy  -u ${HUB_ORG}"
 			}
 			  
             printf rmsg
