@@ -36,7 +36,9 @@ node {
 	
     //withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')])
 	
-		withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file'),
+		//withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file'),
+	
+		withCredentials([file(credentialsId: 'Krish_server_key', variable: 'jwt_key_file'),
 						string(credentialsId: 'Krish_Connect_App_Consumer_Key',variable: 'CONNECTED_APP_CONSUMER_KEY'),
 						string(credentialsId: 'HUB_ORG',variable: 'HUB_ORG'),
 						string(credentialsId: 'SFDC_HOST',variable: 'SFDC_HOST')])	{
