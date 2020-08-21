@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>NAME</columns>
+    <columns>ContactId__c</columns>
+    <columns>Email__c</columns>
+    <columns>FirstName__c</columns>
+    <columns>LastName__c</columns>
+    <columns>IsWithJunkChars__c</columns>
+    <columns>IsWithNoTBID__c</columns>
+    <columns>IsWithNoChild__c</columns>
+    <columns>IsChild1Outdated__c</columns>
+    <columns>IsChild2Outdated__c</columns>
+    <columns>CREATED_DATE</columns>
+    <columns>LAST_UPDATE</columns>
+    <filterScope>Everything</filterScope>
+    <label>All</label>
+</ListView>
