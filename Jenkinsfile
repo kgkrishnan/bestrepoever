@@ -114,13 +114,19 @@ node {
 			//	if (isUnix()) {
 					
 			//		//rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d ${deployPackagePath} -u ${HUB_ORG} --wait 20"
+				
+					//below MDAPI command worked for last sucessful deploy
 			//		//rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d manifest/. -u ${HUB_ORG} --wait 20"
+				
 			//		//rmsg = sh returnStdout: true, script: "${toolbelt} force:source:deploy -x manifest/package.xml  -u ${HUB_ORG} --wait 20"
 			//		rmsg = sh returnStdout: true, script: "${toolbelt} force:source:deploy -p force-app  -u ${HUB_ORG} --wait 20"
 			//	}else{
 				
 			//		//rmsg = sh returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy -d ${deployPackagePath} -u ${HUB_ORG} --wait 20"
+				
+					//below MDAPI command worked for last sucessful deploy
 			//	   	//rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy -d manifest/. -u ${HUB_ORG} --wait 20"
+				
 			//	   	//rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:deploy -x manifest/package.xml  -u ${HUB_ORG} --wait 20"
 			//		rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:deploy -p force-app  -u ${HUB_ORG} --wait 20"
 			//	}
