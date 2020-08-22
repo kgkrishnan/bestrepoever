@@ -1,11 +1,11 @@
 #!groovy
 import groovy.json.JsonSlurperClassic
 import groovy.lang.Closure;
-import groovy.util.AntBuilder;
+import groovy.ant.AntBuilder;
 
 node {
 
-	def ant = new groovy.util.AntBuilder()          
+	def ant = new groovy.ant.AntBuilder()          
 	ant.echo('hello from Ant!')
 
     def BUILD_NUMBER=env.BUILD_NUMBER
