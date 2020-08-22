@@ -42,7 +42,7 @@
 	<target name="diffBuilderWithGitCommit">
 		<delete dir="deploy-sf"/>
 		<mkdir dir="deploy-sf"/>
-		<copy file="samplePackageXML" tofile="deploy-sf/package.xml"/>
+		<copy file="samplePackage.xml" tofile="deploy-sf/package.xml"/>
 		<echo>Current GIT Commit : ${env.GIT_COMMIT}</echo>
 		<echo>Previous Known Successful GIT Commit : ${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT}</echo>
 		<gitDiff/>
