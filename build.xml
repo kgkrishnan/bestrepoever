@@ -1,4 +1,4 @@
-<project name="test" default="sync" xmlns:sf="antlib:com.salesforce">
+<project name="test" default="diffBuilderWithGitCommit" xmlns:sf="antlib:com.salesforce">
 
 	<property environment="env"/>
 	
