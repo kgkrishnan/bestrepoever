@@ -2,6 +2,9 @@
 import groovy.json.JsonSlurperClassic
 node {
 
+	def ant = new groovy.ant.AntBuilder()          
+	ant.echo('hello from Ant!')
+	
     def BUILD_NUMBER=env.BUILD_NUMBER
     def RUN_ARTIFACT_DIR="tests/${BUILD_NUMBER}"
     def SFDC_USERNAME
@@ -61,40 +64,40 @@ node {
 				if (rc != 0) { error 'hub org authorization failed' }
 
 				println rc
-            }
+            		}
 			
 			
-			stage('make MDAPI Package') {
-                		if (isUnix()) {
-					rmsg = sh returnStdout: true, script: "${toolbelt} force:source:convert -r force-app -d manifest --json --loglevel fatal"
-					
-				}else{
-					 rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:convert -r force-app -d manifest --json --loglevel fatal"
-				   
-				}
+			//stage('make MDAPI Package') {
+                	//	if (isUnix()) {
+			//		rmsg = sh returnStdout: true, script: "${toolbelt} force:source:convert -r force-app -d manifest --json --loglevel fatal"
+			//		
+			//	}else{
+			//		 rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:convert -r force-app -d manifest --json --loglevel fatal"
+			//	   
+			//	}
 				
-				printf rmsg
-				println 'convert to MDAPI Package format step done'
-            }
+			//	printf rmsg
+			//	println 'convert to MDAPI Package format step done'
+           		// }
 			
-			stage('Deploye Code') {
+			//stage('Deploye Code') {
 				
 				
-				// need to pull out assigned username
-				if (isUnix()) {
+			//	// need to pull out assigned username
+			//	if (isUnix()) {
 					
-					rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d manifest/. -u ${HUB_ORG} --wait 20"
-					//rmsg = sh returnStdout: true, script: "${toolbelt} force:source:deploy -x manifest/package.xml  -u ${HUB_ORG} --wait 20"
-				}else{
+			//		rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d manifest/. -u ${HUB_ORG} --wait 20"
+			//		//rmsg = sh returnStdout: true, script: "${toolbelt} force:source:deploy -x manifest/package.xml  -u ${HUB_ORG} --wait 20"
+			//	}else{
 					
-				   rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy -d manifest/. -u ${HUB_ORG} --wait 20"
-				   //rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:deploy -x manifest/package.xml  -u ${HUB_ORG} --wait 20"
-				}
+			//	   rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy -d manifest/. -u ${HUB_ORG} --wait 20"
+			//	   //rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:deploy -x manifest/package.xml  -u ${HUB_ORG} --wait 20"
+			//	}
 				  
-				printf rmsg
-				println('Deployment Success')
-				println(rmsg)
-			}
+			//	printf rmsg
+			//	println('Deployment Success')
+			//	println(rmsg)
+			//}
 		}
 	} // closing for withCredentials([file
 } //closing for withEnv(["HOME=${env.WORKSPACE}"]) {
