@@ -1,11 +1,12 @@
 #!groovy
 import groovy.json.JsonSlurperClassic
-import groovy.lang.Closure;
+import org.apache.tools.ant.Project
+import org.apache.tools.ant.ProjectHelper
 
 node {
 
-	def ant = new AntBuilder()          
-	ant.echo('hello from Ant!')
+	def antBuildFilePathAndName = "build.xml"
+	
 
     def BUILD_NUMBER=env.BUILD_NUMBER
     def RUN_ARTIFACT_DIR="tests/${BUILD_NUMBER}"
@@ -55,10 +56,24 @@ node {
 			println HUB_ORG
 			println SFDC_HOST
 			println CONNECTED_APP_CONSUMER_KEY
-			
+				
+			stage('Execute Ant Script') {
+				def antFile = new File(${antBuildFilePathAndName})
+				def project = new Project()
+				project.init()
+				ProjectHelper.projectHelper.parse(project, antFile)
+				
+				def antTargets = args - ${antBuildFilePathAndName}
+				antTargets.each
+				   {
+				      project.executeTarget(it)
+				   }
+				
+				println 'ANT target diffBuilderWithGitCommit executed to make deploy-sf directory'
+			}
 			
 			stage('Authorize DevHub') {
-                if (isUnix()) {
+                		if (isUnix()) {
 					rc = sh returnStatus: true, script: "${toolbelt} force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
 				}else{
 					 rc = bat returnStatus: true, script: "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile \"${jwt_key_file}\" --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
@@ -66,21 +81,21 @@ node {
 				if (rc != 0) { error 'hub org authorization failed' }
 
 				println rc
-            }
+            		}
 			
 			
-			stage('make MDAPI Package') {
-                if (isUnix()) {
-					rmsg = sh returnStdout: true, script: "${toolbelt} force:source:convert -r force-app -d manifest --json --loglevel fatal"
+			//stage('make MDAPI Package') {
+                	//	if (isUnix()) {
+			//		rmsg = sh returnStdout: true, script: "${toolbelt} force:source:convert -r force-app -d manifest --json --loglevel fatal"
 					
-				}else{
-					 rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:convert -r force-app -d manifest --json --loglevel fatal"
+			//	}else{
+			//		 rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:convert -r force-app -d manifest --json --loglevel fatal"
 				   
-				}
+			//	}
 				
-				printf rmsg
-				println 'convert to MDAPI Package format step done'
-            }
+			//	printf rmsg
+			//	println 'convert to MDAPI Package format step done'
+            		//}
 			
 			//stage('Deploye Code') {
 				
