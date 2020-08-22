@@ -1,7 +1,6 @@
 #!groovy
 import groovy.json.JsonSlurperClassic
 import groovy.lang.Closure;
-import groovy.ant.AntBuilder;
 
 node {
 
