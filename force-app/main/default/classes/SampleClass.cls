@@ -3,7 +3,7 @@ public with sharing class SampleClass {
 
     }
     
-    //private function to return string value
+    //private function to return A string value
     private String returnValue()
     {
         String returnvalue = 'Do your Best Work';
