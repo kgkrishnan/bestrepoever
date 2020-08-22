@@ -55,7 +55,7 @@ node {
 			println CONNECTED_APP_CONSUMER_KEY
 				
 			stage('Execute Ant Script') {
-				def antBuildFilePathAndName = ${env.WORKSPACE} +"\build.xml"
+				def antBuildFilePathAndName = env.WORKSPACE +"\build.xml"
 				def antFile = new File(antBuildFilePathAndName)
 				def project = new Project()
 				project.init()
