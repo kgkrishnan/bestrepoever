@@ -58,12 +58,12 @@ node {
 			println CONNECTED_APP_CONSUMER_KEY
 				
 			stage('Execute Ant Script') {
-				def antFile = new File(${antBuildFilePathAndName})
+				def antFile = new File(antBuildFilePathAndName)
 				def project = new Project()
 				project.init()
 				ProjectHelper.projectHelper.parse(project, antFile)
 				
-				def antTargets = args - ${antBuildFilePathAndName}
+				def antTargets = args - antBuildFilePathAndName
 				antTargets.each
 				   {
 				      project.executeTarget(it)
