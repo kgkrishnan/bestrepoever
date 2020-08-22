@@ -40,9 +40,9 @@
 	</macrodef>
 
 	<target name="diffBuilderWithGitCommit">
-		<delete dir="${sf.deployDir}"/>
-		<mkdir dir="${sf.deployDir}"/>
-		<copy file="${sf.samplePackageXML}" tofile="${sf.deployDir}/package.xml"/>
+		<delete dir="deploy-sf"/>
+		<mkdir dir="deploy-sf"/>
+		<copy file="${sf.samplePackageXML}" tofile="deploy-sf/package.xml"/>
 		<echo>Current GIT Commit : ${env.GIT_COMMIT}</echo>
 		<echo>Previous Known Successful GIT Commit : ${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT}</echo>
 		<gitDiff/>
@@ -70,11 +70,11 @@
 									defaultValue=""/>
 								<if>
 									<not>
-										<available file="${sf.deployDir}/aura/${auraFolder}" type="dir"/>
+										<available file="deploy-sf/aura/${auraFolder}" type="dir"/>
 									</not>
 									<then>
 										<echo>Current Component : ${auraFolder}</echo>
-										<copy todir="${sf.deployDir}" verbose="false">
+										<copy todir="deploy-sf" verbose="false">
 											<fileset dir="src">
 												<include name="aura/${auraFolder}/**" />
 											</fileset>
@@ -89,7 +89,7 @@
 											defaultValue=""/>
 										<propertycopy property="packagedName" from="sf.${component}" override="true"/>
 										<echo>Generating Package.xml : ${component} with ${packagedName}</echo>
-										<xmltask source="${sf.deployDir}/package.xml" dest="${sf.deployDir}/package.xml">
+										<xmltask source="deploy-sf/package.xml" dest="deploy-sf/package.xml">
 											<remove path="/Package/types[name/text()=${packagedName}]"/>
 											<insert path="//*[local-name()='Package']"> <![CDATA[
 				<types>
@@ -112,7 +112,7 @@
 									override="true"
 									defaultValue=""/>
 								<echo>Current Component : ${currentDiffWithoutSRC}</echo>
-								<copy todir="${sf.deployDir}" verbose="false">
+								<copy todir="deploy-sf" verbose="false">
 									<fileset dir="src">
 										<include name="${currentDiffWithoutSRC}" />
 									</fileset>
@@ -121,7 +121,7 @@
 									<available file="@{currentDiff}-meta.xml"/>
 									<then>
 										<echo>Generating meta-xml : @{currentDiff}</echo>
-										<copy todir="${sf.deployDir}" verbose="false">
+										<copy todir="deploy-sf" verbose="false">
 											<fileset dir="src">
 												<include name="${currentDiffWithoutSRC}-meta.xml" />
 											</fileset>
@@ -138,7 +138,7 @@
 									defaultValue=""/>
 								<propertycopy property="packagedName" from="sf.${component}" override="true"/>
 								<echo>Generating Package.xml : ${component} with ${packagedName}</echo>
-								<xmltask source="${sf.deployDir}/package.xml" dest="${sf.deployDir}/package.xml">
+								<xmltask source="deploy-sf/package.xml" dest="deploy-sf/package.xml">
 									<remove path="/Package/types[name/text()=${packagedName}]"/>
 									<insert path="//*[local-name()='Package']"> <![CDATA[
 		<types>
