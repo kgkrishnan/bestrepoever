@@ -5,7 +5,7 @@ import groovy.util.AntBuilder;
 
 node {
 
-	def ant = new groovy.ant.AntBuilder()          
+	def ant = new groovy.util.AntBuilder()          
 	ant.echo('hello from Ant!')
 
     def BUILD_NUMBER=env.BUILD_NUMBER
