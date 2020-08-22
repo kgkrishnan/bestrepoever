@@ -56,16 +56,15 @@ node {
 				
 			stage('Execute Ant Script') {
 				antBuildFilePathAndName = env.WORKSPACE +"\\build.xml"
-				def antFile = new File(antBuildFilePathAndName)
-				def project = new Project()
+				antFile = new File(antBuildFilePathAndName)
+				project = new Project()
 				project.init()
 				ProjectHelper.projectHelper.parse(project, antFile)
 				
-				def antTargets = args - antBuildFilePathAndName
-				antTargets.each
-				   {
-				      project.executeTarget(it)
-				   }
+				//def antTargets = args - antBuildFilePathAndName
+				
+				// execute default Ant target diffBuilderWithGitCommit
+   				project.executeTarget(project.defaultTarget);
 				
 				println 'ANT target diffBuilderWithGitCommit executed to make deploy-sf directory'
 			}
