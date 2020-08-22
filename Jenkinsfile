@@ -94,24 +94,27 @@ node {
 			//	println 'convert to MDAPI Package format step done'
             		//}
 			
-			//stage('Deploye Code') {
+			stage('Deploye Code') {
 				
+				def deployPackagePath = env.WORKSPACE +"\\deploy-sf"
 				
-			//	// need to pull out assigned username
-			//	if (isUnix()) {
+				// need to pull out assigned username
+				if (isUnix()) {
 					
-			//		rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d manifest/. -u ${HUB_ORG} --wait 20"
-			//		//rmsg = sh returnStdout: true, script: "${toolbelt} force:source:deploy -x manifest/package.xml  -u ${HUB_ORG} --wait 20"
-			//	}else{
-					
-			//	   rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy -d manifest/. -u ${HUB_ORG} --wait 20"
-			//	   //rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:deploy -x manifest/package.xml  -u ${HUB_ORG} --wait 20"
-			//	}
+					rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d ${deployPackagePath} -u ${HUB_ORG} --wait 20"
+					//rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d manifest/. -u ${HUB_ORG} --wait 20"
+					//rmsg = sh returnStdout: true, script: "${toolbelt} force:source:deploy -x manifest/package.xml  -u ${HUB_ORG} --wait 20"
+				}else{
+				
+					rmsg = sh returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy -d ${deployPackagePath} -u ${HUB_ORG} --wait 20"
+				   	//rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy -d manifest/. -u ${HUB_ORG} --wait 20"
+				   	//rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:deploy -x manifest/package.xml  -u ${HUB_ORG} --wait 20"
+				}
 				  
-			//	printf rmsg
-			//	println('Deployment Success')
-			//	println(rmsg)
-			//}
+				printf rmsg
+				println('Deployment Success')
+				println(rmsg)
+			}
 		}
 	} // closing for withCredentials([file
 } //closing for withEnv(["HOME=${env.WORKSPACE}"]) {
