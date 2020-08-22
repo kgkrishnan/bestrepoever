@@ -5,9 +5,6 @@ import org.apache.tools.ant.ProjectHelper
 
 node {
 
-	def antBuildFilePathAndName = "build.xml"
-	
-
     def BUILD_NUMBER=env.BUILD_NUMBER
     def RUN_ARTIFACT_DIR="tests/${BUILD_NUMBER}"
     def SFDC_USERNAME
@@ -45,7 +42,7 @@ node {
     //withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')])
 	//withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file'),
 	withEnv(["HOME=${env.WORKSPACE}"]) {
-	
+		
 			withCredentials([file(credentialsId: 'Krish_server_key', variable: 'jwt_key_file'),
 							string(credentialsId: 'Krish_Connect_App_Consumer_Key',variable: 'CONNECTED_APP_CONSUMER_KEY'),
 							string(credentialsId: 'HUB_ORG',variable: 'HUB_ORG'),
@@ -58,6 +55,7 @@ node {
 			println CONNECTED_APP_CONSUMER_KEY
 				
 			stage('Execute Ant Script') {
+				def antBuildFilePathAndName = ${env.WORKSPACE} +"\build.xml"
 				def antFile = new File(antBuildFilePathAndName)
 				def project = new Project()
 				project.init()
