@@ -56,7 +56,7 @@ node {
 				
 			stage('Execute Ant Script') {
 				antBuildFilePathAndName = env.WORKSPACE +"\\build.xml"
-				antFile = new File(antBuildFilePathAndName)
+				def antFile = new File(antBuildFilePathAndName)
 				def project = new Project()
 				project.init()
 				ProjectHelper.projectHelper.parse(project, antFile)
