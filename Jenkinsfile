@@ -92,14 +92,17 @@ node {
 			
 			stage('make MDAPI Package') {
                 		if (isUnix()) {
+					rcq=  sh returnStdout: true, script: "cd ./force-app"
 					rmsg = sh returnStdout: true, script: "${toolbelt} force:source:convert -r force-app -d manifest --json --loglevel fatal"
 					
 				}else{
-					 rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:convert -r force-app -d manifest --json --loglevel fatal"
+					rcq=  sh returnStdout: true, script: "cd ./force-app" 
+					rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:convert -r force-app -d manifest --json --loglevel fatal"
 				   
 				}
 				
 				printf rmsg
+				printf rcq
 				println 'convert to MDAPI Package format step done'
             		}
 			
