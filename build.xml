@@ -1,67 +1,160 @@
 <project name="test" default="diffBuilderWithGitCommit" xmlns:sf="antlib:com.salesforce">
 
 	<property environment="env"/>
+	<property name="sf.username"      value="${env.username}"/>
+	<property name="sf.password"      value="${env.password}"/>
+	<property name="sf.clientId"      value="${env.clientId}"/>
+	<property name="sf.clientSecret"      value="${env.clientSecret}"/>
+	<property name="sf.refreshToken"      value="${env.refreshToken}"/>
+	<property name="sf.serverurl"      value="${env.serverurl}"/>
+	<property name="sf.branch"      value="${env.branch}"/>
+	<property name="canDeploy" value="false"/>
 	
-	<taskdef resource="net/sf/antcontrib/antlib.xml">
-			<classpath>
-				<pathelement location="lib/ant-contrib-1.0b3.jar"/>
-			</classpath>
+	<!-- <property name="sf.fetchFromDuration"      value="${env.fetchFromDuration}"/> -->
+	<taskdef resource="com/salesforce/antlib.xml" uri="antlib:com.salesforce">
+		<classpath>
+			<pathelement location="lib/ant-salesforce.jar"/>
+		</classpath>
 	</taskdef>
-	<macrodef name="gitDiff">
-			<sequential>
-				<exec executable="git" outputproperty="git.diff">
-					<arg value="diff" />
-					<arg value="--pretty=format:" />
-					<arg value="--name-only" />
-					<arg value="${env.GIT_COMMIT}" />
-					<arg value="${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT}" />
-				</exec>
-				<echo>${git.diff}</echo>
-			</sequential>
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="lib/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	<taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask">
+		<classpath>
+			<pathelement location="lib/xmltask.jar"/>
+		</classpath>
+	</taskdef>
+    <macrodef name="gitDiff">
+		<sequential>
+			<exec executable="git" outputproperty="git.diff">
+				<arg value="diff" />
+				<arg value="--pretty=format:" />
+				<arg value="--name-only" />
+				<arg value="${env.GIT_COMMIT}" />
+				<arg value="${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT}" />
+			</exec>
+			<echo>${git.diff}</echo>
+		</sequential>
 	</macrodef>
 
 	<target name="diffBuilderWithGitCommit">
-			<delete dir="deploy-sf"/>
-			<mkdir dir="deploy-sf"/>
-			<echo>Current GIT Commit : ${env.GIT_COMMIT}</echo>
-			<echo>Previous Known Successful GIT Commit : ${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT}</echo>
-			<gitDiff/>
-			<for list="${git.diff}" param="currentDiff" delimiter="${line.separator}">
-				<sequential>
-					<if>
-						<and>
-							<available file="@{currentDiff}"/>
-							<matches string="@{currentDiff}" pattern="force-app/"/>
-						</and>
-						<then>
-							<propertyregex
-								property="currentDiffWithoutSRC"
-								input="@{currentDiff}"
-								regexp="force-app\/([a-zA-Z$]*\/[a-zA-Z0-9\/\.\_-]*)"
-								select="\1"
-								casesensitive="true" 
-								override="true"
-								defaultValue=""/>
-							<echo>Current Component : ${currentDiffWithoutSRC}</echo>
-							<copy todir="deploy-sf" verbose="false">
-								<fileset dir="force-app">
-									<include name="${currentDiffWithoutSRC}" />
-								</fileset>
-							</copy>
-							<if>
-								<available file="@{currentDiff}-meta.xml"/>
-								<then>
-									<echo>Generating meta-xml : @{currentDiff}</echo>
-									<copy todir="deploy-sf" verbose="false">
-										<fileset dir="force-app">
-											<include name="${currentDiffWithoutSRC}-meta.xml" />
-										</fileset>
-									</copy>
-								</then>
-							</if>
-						</then>
-					</if>
-				</sequential>
-			</for>
-	</target>
+		<delete dir="${sf.deployDir}"/>
+		<mkdir dir="${sf.deployDir}"/>
+		<copy file="${sf.samplePackageXML}" tofile="${sf.deployDir}/package.xml"/>
+		<echo>Current GIT Commit : ${env.GIT_COMMIT}</echo>
+		<echo>Previous Known Successful GIT Commit : ${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT}</echo>
+		<gitDiff/>
+		<for list="${git.diff}" param="currentDiff" delimiter="${line.separator}">
+			<sequential>
+				<if>
+					<and>
+						<available file="@{currentDiff}"/>
+						<matches string="@{currentDiff}" pattern="src/"/>
+						<not>
+						      <matches string="@{currentDiff}" pattern="package.xml"/>
+						</not>
+					</and>
+					<then>
+						<if>
+							<matches string="@{currentDiff}" pattern="src/aura/"/>
+							<then>
+								<propertyregex
+									property="auraFolder"
+									input="@{currentDiff}"
+									regexp="src\/aura\/([a-zA-Z\_]*)\/[a-zA-Z0-9\/\.\_]*"
+									select="\1"
+									casesensitive="true" 
+									override="true"
+									defaultValue=""/>
+								<if>
+									<not>
+										<available file="${sf.deployDir}/aura/${auraFolder}" type="dir"/>
+									</not>
+									<then>
+										<echo>Current Component : ${auraFolder}</echo>
+										<copy todir="${sf.deployDir}" verbose="false">
+											<fileset dir="src">
+												<include name="aura/${auraFolder}/**" />
+											</fileset>
+										</copy>
+										<propertyregex
+											property="component"
+											input="@{currentDiff}"
+											regexp="src\/([a-zA-Z]*)\/[a-zA-Z0-9\/\.\_]*"
+											select="\1"
+											casesensitive="true" 
+											override="true"
+											defaultValue=""/>
+										<propertycopy property="packagedName" from="sf.${component}" override="true"/>
+										<echo>Generating Package.xml : ${component} with ${packagedName}</echo>
+										<xmltask source="${sf.deployDir}/package.xml" dest="${sf.deployDir}/package.xml">
+											<remove path="/Package/types[name/text()=${packagedName}]"/>
+											<insert path="//*[local-name()='Package']"> <![CDATA[
+				<types>
+				<name>${packagedName}</name>
+				<members>*</members>
+				</types>
+											]]>
+											</insert>
+										</xmltask>
+									</then> 
+								</if>
+							</then>
+							<else>
+								<propertyregex
+									property="currentDiffWithoutSRC"
+									input="@{currentDiff}"
+									regexp="src\/([a-zA-Z]*\/[a-zA-Z0-9\/\.\_]*)"
+									select="\1"
+									casesensitive="true" 
+									override="true"
+									defaultValue=""/>
+								<echo>Current Component : ${currentDiffWithoutSRC}</echo>
+								<copy todir="${sf.deployDir}" verbose="false">
+									<fileset dir="src">
+										<include name="${currentDiffWithoutSRC}" />
+									</fileset>
+								</copy>
+								<if>
+									<available file="@{currentDiff}-meta.xml"/>
+									<then>
+										<echo>Generating meta-xml : @{currentDiff}</echo>
+										<copy todir="${sf.deployDir}" verbose="false">
+											<fileset dir="src">
+												<include name="${currentDiffWithoutSRC}-meta.xml" />
+											</fileset>
+										</copy>
+									</then>
+								</if>
+								<propertyregex
+									property="component"
+									input="@{currentDiff}"
+									regexp="src\/([a-zA-Z]*)\/[a-zA-Z0-9\/\.\_]*"
+									select="\1"
+									casesensitive="true" 
+									override="true"
+									defaultValue=""/>
+								<propertycopy property="packagedName" from="sf.${component}" override="true"/>
+								<echo>Generating Package.xml : ${component} with ${packagedName}</echo>
+								<xmltask source="${sf.deployDir}/package.xml" dest="${sf.deployDir}/package.xml">
+									<remove path="/Package/types[name/text()=${packagedName}]"/>
+									<insert path="//*[local-name()='Package']"> <![CDATA[
+		<types>
+		<name>${packagedName}</name>
+		<members>*</members>
+		</types>
+									]]>
+									</insert>
+								</xmltask> 
+							</else>
+						</if>
+						<var name="canDeploy" unset="true"/>
+						<property name="canDeploy" value="true"/>
+					</then>
+				</if>
+			</sequential>
+		</for>
+    </target>
 </project>
